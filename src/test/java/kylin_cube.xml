@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Schema name="kylin_cube" metamodelVersion="4.0">
+    <PhysicalSchema>
+        <Table name="GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD">
+            <Key>
+                <Column name='HOMEWORK_ID' />
+            </Key>
+            <ColumnDefs>
+                <CalculatedColumnDef name="COMMIT_STU">
+                    <ExpressionView>
+                        <SQL dialect="kylin">(case when 
+                        <Column name="COMMIT_DATETIME" />is not null then 
+                        <Column name="STUDENT_ID" />else null end)</SQL>
+                    </ExpressionView>
+                </CalculatedColumnDef>
+                <CalculatedColumnDef name="COMMIT_HOMEWORK">
+                    <ExpressionView>
+                        <SQL dialect="kylin">(case when 
+                        <Column name="COMMIT_DATETIME" />is not null then 
+                        <Column name="HOMEWORK_ID" />else null end)</SQL>
+                    </ExpressionView>
+                </CalculatedColumnDef>
+                <CalculatedColumnDef name="SCHOOL_LEVEL_N">
+                    <ExpressionView>
+                        <SQL dialect="kylin">(case when 
+                        <Column name="SCHOOL_LEVEL" />= '1' then '小学' else '中学' end)</SQL>
+                    </ExpressionView>
+                </CalculatedColumnDef>
+            </ColumnDefs>
+        </Table>
+        <Table name='DIM_HW_DICT_INFO' alias='DIM_HOMEWORK_FORM'>
+            <Key>
+                <Column name='DICT_ID' />
+            </Key>
+            <ColumnDefs>
+                <CalculatedColumnDef name='HOMEWORK_FORM'>
+                    <ExpressionView>
+                        <SQL dialect='kylin'>where substring(
+                        <Column table='DIM_HOMEWORK_FORM' name='DICT_ID' />,1,3) = '007'</SQL>
+                    </ExpressionView>
+                </CalculatedColumnDef>
+            </ColumnDefs>
+        </Table>
+        <Table name='DIM_HW_DICT_INFO' alias='DIM_HOMEWORK_TYPE'>
+            <Key>
+                <Column name='DICT_ID' />
+            </Key>
+            <ColumnDefs>
+                <CalculatedColumnDef name='HOMEWORK_TYPE'>
+                    <ExpressionView>
+                        <SQL dialect='kylin'>where substring(
+                        <Column table='DIM_HOMEWORK_TYPE' name='DICT_ID' />,1,3) = '001'</SQL>
+                    </ExpressionView>
+                </CalculatedColumnDef>
+            </ColumnDefs>
+        </Table>
+        <Table name='MID_SCHOOL_INFO_NEW'>
+            <Key>
+                <Column name='SCHOOL_ID' />
+            </Key>
+        </Table>
+    </PhysicalSchema>
+    <Dimension name="区域" table="MID_SCHOOL_INFO_NEW" key="SCHOOL_ID">
+        <Attributes>
+            <Attribute name='SCHOOL_ID' keyColumn='SCHOOL_ID' hasHierarchy='false' />
+            <Attribute name='省' keyColumn='PROVINCE_NAME' type='String' hasHierarchy='false' />
+            <Attribute name='市' type='String' hasHierarchy='false'>
+                <Key>
+                    <Column name="PROVINCE_NAME" />
+                    <Column name="CITY_NAME" />
+                </Key>
+                <name>
+                    <Column name="CITY_NAME" />
+                </name>
+            </Attribute>
+            <Attribute name='区' type='String' hasHierarchy='false'>
+                <Key>
+                    <Column name="CITY_NAME" />
+                    <Column name="COUNTY_NAME" />
+                </Key>
+                <name>
+                    <Column name="COUNTY_NAME" />
+                </name>
+            </Attribute>
+            <Attribute name='学校' type='String' hasHierarchy='false'>
+                <Key>
+                    <Column name="COUNTY_NAME" />
+                    <Column name="SCHOOL_CNAME" />
+                </Key>
+                <name>
+                    <Column name="SCHOOL_CNAME" />
+                </name>
+            </Attribute>
+        </Attributes>
+        <Hierarchies>
+            <Hierarchy name='区域' hasAll="true">
+                <Level attribute='省' type='String' />
+                <Level attribute='市' type='String' />
+                <Level attribute='区' type='String' />
+                <Level attribute='学校' type='String' />
+            </Hierarchy>
+        </Hierarchies>
+    </Dimension>
+    <Cube name="学生作业统计">
+        <Dimensions>
+            <Dimension source='区域' />
+            <Dimension name='CLIENT' table='GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD' key='HOMEWORK_ID'>
+                <Attributes>
+                    <Attribute name="HOMEWORK_ID" keyColumn="HOMEWORK_ID" hasHierarchy="false" />
+                    <Attribute name="CLIENT">
+                        <Key>
+                            <Column name='CLIENT' />
+                        </Key>
+                        <name>
+                            <Column name='CLIENT' />
+                        </name>
+                    </Attribute>
+                </Attributes>
+            </Dimension>
+            <Dimension name='作业布置时间' table='GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD' key='HOMEWORK_ID'>
+                <Attributes>
+                    <Attribute name="HOMEWORK_ID" keyColumn="HOMEWORK_ID" hasHierarchy="false" />
+                    <Attribute name="作业布置时间" keyColumn="CREATE_DATETIME" />
+                </Attributes>
+            </Dimension>
+            <Dimension name="作业*型" table="GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD" key="HOMEWORK_ID">
+                <Attributes>
+                    <Attribute name="HOMEWORK_ID" keyColumn="HOMEWORK_ID" hasHierarchy="false" />
+                    <Attribute name="作业形式" keyColumn="HOMEWORK_FORM_NAME" />
+                    <Attribute name="作业类型" keyColumn="HOMEWORK_TYPE_NAME" />
+                    <Attribute name="作业设计方式" keyColumn="HOMEWORK_DESIGN_NAME" />
+                    <Attribute name="作业选题方式" keyColumn="HOMEWORK_CHOOSE_MODE_NAME" />
+                    <Attribute name="作业提交方式" keyColumn="HOMEWORK_COMMIT_MODE_NAME" />
+                    <Attribute name="作业作答方式" keyColumn="HOMEWORK_ANSWER_MODE_NAME" />
+                </Attributes>
+            </Dimension>
+            <Dimension name='科目' table='GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD' key='HOMEWORK_ID'>
+                <Attributes>
+                    <Attribute name="HOMEWORK_ID" keyColumn="HOMEWORK_ID" hasHierarchy="false" />
+                    <Attribute name="科目" keyColumn="SUBJECT" />
+                </Attributes>
+            </Dimension>
+            <Dimension name='学制' table='GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD' key='HOMEWORK_ID'>
+                <Attributes>
+                    <Attribute name="HOMEWORK_ID" keyColumn="HOMEWORK_ID" hasHierarchy="false" />
+                    <Attribute name="学制" keyColumn="SCHOOL_LEVEL_N" />
+                </Attributes>
+            </Dimension>
+        </Dimensions>
+        <MeasureGroups>
+            <MeasureGroup name="学生作业相关指标" table="GDM_STUDENT_DONE_NEWHOMEWORK_BASIC_RECORD">
+                <Measures>
+                    <Measure name="学生做作业学生使用数" column="STUDENT_ID" aggregator="distinct-count" formatString="#,###" />
+                    <Measure name="学生做作业学生使用个数" column="HOMEWORK_ID" aggregator="count" formatString="#,###" />
+                    <Measure name="学生做作业学生完成数" column="COMMIT_STU" aggregator="distinct-count" formatString="#,###" />
+                    <Measure name="学生做作业学生完成个数" column="COMMIT_HOMEWORK" aggregator="distinct-count" formatString="#,###" />
+                    <Measure name="学生做作业班组使用数" column="GROUP_ID" aggregator="distinct-count" formatString="#,###" />
+                </Measures>
+                <DimensionLinks>
+                    <FactLink dimension='CLIENT' />
+                    <ForeignKeyLink dimension="区域" foreignKeyColumn="SCHOOL_ID" />
+                    <FactLink dimension='作业布置时间' />
+                    <FactLink dimension='作业*型' />
+                    <FactLink dimension='科目' />
+                    <FactLink dimension='学制' />
+                </DimensionLinks>
+            </MeasureGroup>
+        </MeasureGroups>
+    </Cube>
+</Schema>
