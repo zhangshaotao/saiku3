@@ -38,7 +38,10 @@ var Upgrade = Backbone.View.extend({
 		return Math.round((second-first)/(1000*60*60*24));
 	},
 
-	render: function() {
+	//隐藏升级提示信息  --zst 2016-07-22
+	render:function() {},
+	
+	render_bak: function() {
 
 		var self = this;
 		var license = new License();

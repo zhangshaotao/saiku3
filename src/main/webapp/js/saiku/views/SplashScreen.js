@@ -74,7 +74,15 @@ var SplashScreen = Backbone.View.extend({
         }
         return false;
     },
-    template: function() {
+    //前端home页修改  --zst 20160722
+    template:function(){
+    	 var template = $("<div> <div id='splash'><img src='/saiku3/images/17zuoye.png.jpg' width='100%'></div> </div>").html() || "";
+    			 return _.template(template)({
+    		            //    cube_navigation: Saiku.session.sessionworkspace.cube_navigation
+    		        });
+    },
+    
+    template_bak: function() {
         var template = $("<div> <div id='splash'> <nav> <ul> <li class='active'><a class='welcome head'" +
                 " href='#'>Welcome</a></li> <li><a class='features head' href='#'>Features</a></li> <li><a" +
                 " class='help head' href='#'>Get Help</a></li> <li class='enterprisetoggle enterprise'><a" +

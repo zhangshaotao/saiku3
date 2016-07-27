@@ -33,7 +33,7 @@ var Settings = {
     // number of erroneous ajax calls in a row before UI cant recover
     ERROR_TOLERANCE: 3,
     QUERY_PROPERTIES: {
-        'saiku.olap.query.automatic_execution': true,
+        'saiku.olap.query.automatic_execution': false,
         'saiku.olap.query.nonempty': true,
         'saiku.olap.query.nonempty.rows': true,
         'saiku.olap.query.nonempty.columns': true,
