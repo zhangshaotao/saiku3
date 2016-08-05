@@ -15,9 +15,51 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.olap4j.impl.NamedListImpl;
+import org.olap4j.metadata.NamedList;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query2.ThinAxis;
+import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
+import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
+import org.saiku.olap.query2.ThinSelection;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -25,36 +67,14 @@ import org.saiku.web.export.JSConverter;
 import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.qmino.miredot.annotations.ReturnType;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import java.io.InputStream;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Saiku Query Endpoints
@@ -180,6 +200,9 @@ public class Query2Resource {
     @Consumes({"application/json" })
     @Path("/execute")
     public QueryResult execute(ThinQuery tq) {
+    	//限制查询时间区间
+    	tq = this.restrictQueryByDate(tq);
+    	
         try {
             if (thinQueryService.isMdxDrillthrough(tq)) {
                 Long start = (new Date()).getTime();
@@ -781,5 +804,146 @@ public class Query2Resource {
 
   public ThinQueryService getThinQueryService() {
     return thinQueryService;
+  }
+  
+  /***
+	 * 该方法为限制在查询中的日期：若不限制日期，则选取当天日期加以限制
+	 * zst create 20160802
+	 * */
+  
+  private ThinQuery restrictQueryByDate(ThinQuery tq) {
+	  
+	ThinQueryModel queryModel = tq.getQueryModel();
+  	Map<AxisLocation, ThinAxis> axesMap = queryModel.getAxes();
+  	
+  	NamedList<ThinHierarchy> namedList = new NamedListImpl<ThinHierarchy>();
+  	
+  	//rows中是否包含[日期]维度，若包含且没有限制时间区间，则限制为当天；
+  	boolean flag = false;
+  	
+  	ThinAxis filterAxis = axesMap.get(AxisLocation.FILTER);
+  	List<ThinHierarchy> filterHie = filterAxis.getHierarchies();
+  	
+  	namedList = this.resetThinHierachy(filterHie);
+  		
+  	//将修改后的Row重新set到queryModel
+  	if(namedList.size() > 0) {
+  		
+		ThinAxis newFilterAxis = new ThinAxis(
+				AxisLocation.FILTER,
+				namedList,
+				filterAxis.isNonEmpty(),
+				filterAxis.getAggregators()
+				);
+		
+		axesMap.put(AxisLocation.FILTER,newFilterAxis);
+  	}
+  	
+  	//将修改后的Row重新set到queryModel
+  	if(namedList.size() == 0) {
+  		
+  		ThinAxis rowAxis = axesMap.get(AxisLocation.ROWS);
+  	  	List<ThinHierarchy> rowHie = rowAxis.getHierarchies();
+  	  	
+  	  	namedList = this.resetThinHierachy(rowHie);
+  		
+  		if(namedList.size() > 0) {
+			ThinAxis newRowsAxis = new ThinAxis(
+					AxisLocation.ROWS,
+					namedList,
+					rowAxis.isNonEmpty(),
+					rowAxis.getAggregators()
+					);
+			
+			axesMap.put(AxisLocation.ROWS,newRowsAxis);
+  		}	
+  	}
+  	
+  	//若rows中不包含[日期]维度，则判断culowns中是否包含；
+  	//若columns中包含[日期]维度，且没有限制时间区间，则限制为当天；不包含[日期]维度，则强制添加[日期]维度，并限制时间为当天；
+  	if(namedList.size() == 0) {
+  		
+//  		namedList.clear();
+  		
+    	ThinAxis colAxis = axesMap.get(AxisLocation.COLUMNS);
+    	List<ThinHierarchy> colHie = colAxis.getHierarchies();
+    	
+    	namedList = this.resetThinHierachy(colHie);
+    	
+    	if(namedList.size() == 0) {
+    		
+    		//若list为空，则说明columns中不包含日期维度,将colHie加入list中，并强制添加日期维度
+    		namedList.addAll(colHie);
+    		
+    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			String yesterday = format.format(new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
+			
+			String newDateMdx = "[日期].[日期].["+yesterday+"]";
+			
+			ThinMember thinMember = new ThinMember(yesterday,newDateMdx,yesterday);
+    		ThinHierarchy thinHie = new ThinHierarchy();
+    		
+    		thinHie.setName("[日期].[日期]");
+    		
+    		List<ThinMember> thinMemberList = new ArrayList<ThinMember>();
+			thinMemberList.add(thinMember);
+			ThinSelection selection = new ThinSelection();
+			selection.setMembers(thinMemberList);
+			selection.setType(ThinSelection.Type.INCLUSION);
+			ThinLevel thinLevel = new ThinLevel(yesterday,yesterday,selection,null);
+	//  			thinLevel.setSelection(selection);
+			Map<String,ThinLevel> mapLevel = new LinkedHashMap<String,ThinLevel>();
+			mapLevel.put("日期", thinLevel);
+	    		
+			thinHie.setLevels(mapLevel);
+			
+			namedList.add(thinHie);
+    		ThinAxis newColAxis = new ThinAxis(
+    				AxisLocation.COLUMNS,
+    				namedList,
+    				colAxis.isNonEmpty(),
+    				colAxis.getAggregators()
+    				);
+    		
+    		axesMap.put(AxisLocation.COLUMNS,newColAxis);
+    	}
+  	}
+  	
+  	return tq;
+  }
+  
+  private NamedList<ThinHierarchy> resetThinHierachy(List<ThinHierarchy> hieList) {
+	  
+	  NamedList<ThinHierarchy> namedList = new NamedListImpl<ThinHierarchy>();
+	  boolean flag = false;
+	  
+	  for(ThinHierarchy hie : hieList) {
+	  		if(hie.getName().equals("[日期].[日期]")) {
+	    		
+	    		if(hie.getLevels().get("日期").getSelection() == null) {
+	    			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	    			String yesterday = format.format(new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
+	    			
+	    			String newDateMdx = "[日期].[日期].["+yesterday+"]";
+	    			
+	    			ThinMember thinMember = new ThinMember(null,newDateMdx,yesterday);
+	    			
+	    			List<ThinMember> thinMemberList = new ArrayList<ThinMember>();
+	    			thinMemberList.add(thinMember);
+	    			ThinSelection selection = new ThinSelection();
+	    			selection.setMembers(thinMemberList);
+	    			
+	    			hie.getLevels().get("日期").setSelection(selection);
+	    		}
+	    		
+	    		flag = true;
+	  		}
+	  		
+	  		namedList.add(hie);
+	  	}
+	  if(flag) return namedList;
+	  
+	  namedList.clear();
+	  return namedList;
   }
 }
