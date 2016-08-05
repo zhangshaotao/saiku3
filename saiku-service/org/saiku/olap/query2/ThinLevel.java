@@ -44,4 +44,8 @@ public class ThinLevel extends AbstractThinQuerySet {
 	public List<String> getAggregators() {
 		return aggregators;
 	}
+	
+	public void setSelection(ThinSelection selection) {
+		this.selection = selection;
+	}
 }

@@ -202,7 +202,8 @@ public class SessionService implements ISessionService {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object p = auth.getPrincipal();
-			//createSession(auth, null, null);
+			//之前是注释掉的现在放开：保存查询时获取用户目录及保存文件        -- zst update on 20160726
+			createSession(auth, null, null);
 			if (sessionHolder.containsKey(p)) {
 				Map<String,Object> r = new HashMap<>();
 				r.putAll(sessionHolder.get(p)); 
