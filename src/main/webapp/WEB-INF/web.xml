@@ -63,6 +63,109 @@
 		<session-timeout>60</session-timeout>
 	</session-config>
 	
+	
+	<!--- cas单点   start -->
+	<!-- 
+	<filter>
+        <filter-name>CAS Single Sign Out Filter</filter-name>
+        <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+		<init-param>
+            <param-name>casServerUrlPrefix</param-name>
+            <param-value>https://sso.17zuoye.net/cas</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>http://localhost:8080</param-value>
+        </init-param>
+        <init-param>
+            <param-name>renew</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>gateway</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS Single Sign Out Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CASFilter</filter-name>
+        <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>casServerLoginUrl</param-name>
+            <param-value>https://sso.17zuoye.net/cas/login</param-value>
+        </init-param>
+        <init-param>
+           
+            <param-name>serverName</param-name> 
+            <param-value>http://localhost:8080</param-value>
+        </init-param>
+    </filter>
+	
+    <filter-mapping>
+        <filter-name>CASFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CAS Validation Filter</filter-name>
+        <filter-class>
+            org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter
+        </filter-class>
+        <init-param>
+            <param-name>casServerUrlPrefix</param-name>
+            <param-value>https://sso.17zuoye.net/cas</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>http://localhost:8080</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS Validation Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+   
+    <filter>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <filter-class>
+            org.jasig.cas.client.util.HttpServletRequestWrapperFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CAS Assertion Thread Local Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS Assertion Thread Local Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CasForInvokeContextFilter</filter-name>
+        <filter-class>org.saiku.web.filter.SaikuSSOLoginFilter</filter-class>
+        <init-param>
+            <param-name>appId</param-name>
+            <param-value>a5ea611bbff7474a81753697a1714fb0</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CasForInvokeContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping> -->
+	<!--- cas单点   end -->
+	
+	
+
 	<filter>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -73,6 +176,21 @@
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+
+	 <!-- 
+    <filter>
+        <filter-name>SaikuSSOLoginFilter</filter-name>
+        <filter-class>org.saiku.web.filter.SaikuSSOLoginFilter</filter-class>
+        <init-param>
+            <param-name>appId</param-name>
+            <param-value>a5ea611bbff7474a81753697a1714fb0</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>SaikuSSOLoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+ -->
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -160,10 +278,10 @@
         <url-pattern>/rmi</url-pattern>
     </servlet-mapping>-->
 
-    <servlet>
+<!--     <servlet>
         <servlet-name>H2Console</servlet-name>
         <servlet-class>org.h2.server.web.WebServlet</servlet-class>
-        <!--
+        
         <init-param>
             <param-name>webAllowOthers</param-name>
             <param-value></param-value>
@@ -172,13 +290,13 @@
             <param-name>trace</param-name>
             <param-value></param-value>
         </init-param>
-        -->
+       
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>H2Console</servlet-name>
         <url-pattern>/console/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
 
 	<servlet>
     	<servlet-name>jersey2</servlet-name>

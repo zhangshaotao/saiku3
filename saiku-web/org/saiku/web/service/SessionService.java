@@ -100,7 +100,7 @@ public class SessionService implements ISessionService {
 	private void createSession(Authentication auth, String username, String password) {
 
 		if (auth ==  null || !auth.isAuthenticated()) {
-			return;
+			return; 
 		}
 		
 		boolean isAnonymousUser = (auth instanceof AnonymousAuthenticationToken);		
@@ -193,6 +193,12 @@ public class SessionService implements ISessionService {
 			  r.remove("password");
 			  return r;
 		  }
+//			if (!sessionHolder.containsKey(p)) {
+//	            createSession(auth, "","");
+//	        }
+//	        Map<String, Object> r = new HashMap<String, Object>();
+//	        r.putAll(sessionHolder.get(p));
+//	        r.remove("password");
 
 		}
 		return new HashMap<>();

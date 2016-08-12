@@ -141,7 +141,39 @@ var Session = Backbone.Model.extend({
         this.form.render().open();
         this.form.setError(response);
     },
-    logout: function() {
+    
+    
+    //saiku集成单点：退出saiku时，注销单点，并注销saiku session  --zst  update on 20160811 
+    logout:function() {
+    	Saiku.ui.unblock();
+        $('#header').empty().hide();
+        $('#tab_panel').remove();
+        Saiku.tabs = new TabSet();
+        Saiku.toolbar.remove();
+        Saiku.toolbar = new Toolbar();
+
+        if (typeof localStorage !== "undefined" && localStorage) {
+            localStorage.clear();
+        }
+
+        this.set('id', _.uniqueId('queryaction_'));
+        this.destroy({async: false });
+
+        this.clear();
+        this.sessionid = null;
+        this.username = null;
+        this.password = null;
+		this.roles = null;
+        this.isAdmin = false;
+        this.destroy({async: false });
+        //console.log("REFRESH!");
+        document.location.reload(false);
+        delete this.id;
+    	//window.location = "https://sso.oaloft.com/cas/logout?service=http://cube.17zuoye.net";
+        window.location = "https://sso.oaloft.com/cas/logout?service=http%3A%2F%2Fcube.17zuoye.net%2F";  //注：必须使用这种编码的url
+    },
+    
+    logout_bak: function() {
         // FIXME - This is a hack (inherited from old UI)
         Saiku.ui.unblock();
         $('#header').empty().hide();

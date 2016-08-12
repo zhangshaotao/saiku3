@@ -134,7 +134,8 @@ public class Query2Resource {
      *
      */
     @POST
-    @Produces({"application/json" })
+    @Produces({"application/json;charset=UTF-8" })
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED }) 
     @Path("/{queryname}")
     public ThinQuery createQuery(
             @PathParam("queryname") String queryName,
@@ -150,6 +151,7 @@ public class Query2Resource {
                 json = formParams.containsKey("json") ? formParams.getFirst("json") : jsonFormParam;
                 file = formParams.containsKey("file") ? formParams.getFirst("file") : fileFormParam;
             }
+            
             String filecontent = null;
             if (StringUtils.isNotBlank(json)) {
                 filecontent = json;

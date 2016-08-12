@@ -15,24 +15,34 @@
  */
 package org.saiku.web.rest.resources;
 
-import org.saiku.service.ISessionService;
-import org.saiku.service.user.UserService;
-
-import com.qmino.miredot.annotations.ReturnType;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
+import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang.StringUtils;
+import org.saiku.service.ISessionService;
+import org.saiku.service.user.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.qmino.miredot.annotations.ReturnType;
 
 
 /**
@@ -154,6 +164,7 @@ public class SessionResource  {
         return Response.ok().entity(sess).build();
 	}
 
+	//saiku集成单点：退出saiku时，注销单点，并注销saiku session  --update on 20160811
   /**
    * Logout of the Session
    * @summary Logout
@@ -161,11 +172,23 @@ public class SessionResource  {
    * @return A 200 response.
    */
 	@DELETE
-	public Response logout(@Context HttpServletRequest req) 
+	@ResponseBody
+	public Response logout(@Context HttpServletRequest req,@Context HttpServletResponse response) 
 	{
 		sessionService.logout(req);
 		//		NewCookie terminate = new NewCookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
 
+		HttpSession session = req.getSession();
+        session.invalidate();
+//        ServletContext application = session.getServletContext();
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+//        try {
+//            
+//            response.sendRedirect(application.getInitParameter("casServerLogoutUrl") + "?service=" + application.getInitParameter("serverName"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+		
 		return Response.ok().build();
 
 	}
