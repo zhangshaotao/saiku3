@@ -35,13 +35,14 @@ var Toolbar = Backbone.View.extend({
         var self = this;
         if(Settings.LOGO){
             self.logo = "<h1 id='logo_override'>"+
-                "<img src='"+Settings.LOGO+"'/>"+
+                "<img src='"+Settings.LOGO+"'/>"+          //update by zst on 20160815   去除右上角saiku logo
                 "</h1>";
             self.render();
         }
         else{
             self.logo = "<h1 id='logo'>"+
-                "<a href='http://www.meteorite.bi/' title='Saiku - Next Generation Open Source Analytics' target='_blank' class='sprite'>Saiku</a>"+
+//                "<a href='http://www.meteorite.bi/' title='Saiku - Next Generation Open Source Analytics' target='_blank' class='sprite'>Saiku</a>"+
+            "<a style='background: url(images/src/logo-blue-36.png) no-repeat scroll 0% 0%; margin-top: -20px; height: 36px;'></a>"+
                 "</h1>";
             self.render();
         }

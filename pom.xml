@@ -439,11 +439,11 @@
             <artifactId>iText</artifactId>  
             <version>4.2.0</version>  
         </dependency>  
-        <dependency>  
+<!--         <dependency>  
             <groupId>org.saiku</groupId>  
             <artifactId>saiku-query</artifactId>  
             <version>0.1-SNAPSHOT</version>  
-        </dependency>  
+        </dependency>   -->
         <dependency>  
             <groupId>pentaho</groupId>  
             <artifactId>mondrian</artifactId>  

@@ -292,19 +292,19 @@ Saiku.events.bind('session:new', function() {
     Saiku.session.bind('tab:add', Saiku.i18n.translate);
 
     /** 
-     * Add translate button
+     * Add translate button  update by zst on 20160817 去除翻译按钮
      */
-    if (Saiku.i18n.locale != "en" && Saiku.session.isAdmin) {
-        var $link = $("<a />").text(Saiku.i18n.locale)
-            .attr({ 
-                href: "#translate",
-                title: "Improve this translation"
-            })
-            .click(Saiku.i18n.improve_translation)
-            .addClass('sprite translate i18n');
-        var $li = $("<li />").append($link);
-        $(Saiku.toolbar.el).find('ul').append($li).append('<li class="separator">&nbsp;</li>');
-    }
+//    if (Saiku.i18n.locale != "en" && Saiku.session.isAdmin) {
+//        var $link = $("<a />").text(Saiku.i18n.locale)
+//            .attr({ 
+//                href: "#translate",
+//                title: "Improve this translation"
+//            })
+//            .click(Saiku.i18n.improve_translation)
+//            .addClass('sprite translate i18n');
+//        var $li = $("<li />").append($link);
+//        $(Saiku.toolbar.el).find('ul').append($li).append('<li class="separator">&nbsp;</li>');
+//    }
 
 });
 
