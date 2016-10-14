@@ -820,9 +820,6 @@ public class Query2Resource {
   	
   	NamedList<ThinHierarchy> namedList = new NamedListImpl<ThinHierarchy>();
   	
-  	//rows中是否包含[日期]维度，若包含且没有限制时间区间，则限制为当天；
-  	boolean flag = false;
-  	
   	ThinAxis filterAxis = axesMap.get(AxisLocation.FILTER);
   	List<ThinHierarchy> filterHie = filterAxis.getHierarchies();
   	

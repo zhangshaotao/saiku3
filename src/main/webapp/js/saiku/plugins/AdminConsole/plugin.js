@@ -487,12 +487,13 @@ var AdminConsole = Backbone.View.extend({
         " Cache</a><div class='clear'></div></form>" +
         "<div id='savestatus'></div>"
        ),
+    //修改a href saiku--> saiku3  项目名称改变导致下载schema文件404
     schemauploadtemplate: _.template( "<h3>Schema Management</h3>" +
         "<input name='fileschema' type='file' class='form-control upload_button'/><div class='clear'></div><br/>" +
         "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' class='form-control' value='<%=" +
         " schema.id %>'/><br/>" +
 	    "<a href='<%= schema.id%>' class='user_button form_button btn btn-default remove_schema hide'>Remove</a>" +
-	    "<a href='/saiku/rest/saiku/admin/schema/<%= schema.id%>' class='user_button btn btn-default form_button download_schema hide'>Download</a><input type='submit' class='user_button form-control form_button upload_button submitdatasource' value='Upload'>" +
+	    "<a href='/saiku3/rest/saiku/admin/schema/<%= schema.id%>' class='user_button btn btn-default form_button download_schema hide'>Download</a><input type='submit' class='user_button form-control form_button upload_button submitdatasource' value='Upload'>" +
         "<br/><div id='uploadstatus'></div>"),
     licenseInfoTemplate: _.template("<h3>License Information</h3>" +
         "<ul class='license_type'><li><strong>License Type: </strong></li>" +
