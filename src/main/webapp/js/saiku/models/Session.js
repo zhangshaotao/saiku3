@@ -99,24 +99,24 @@ var Session = Backbone.Model.extend({
                 Saiku.i18n.locale = this.language;
                 Saiku.i18n.automatic_i18n();
             }
-                var license =new License();
-
-                license.fetch_license('api/license/', function(opt) {
-                    if (opt.status === 'success') {
-                        Settings.LICENSE = opt.data.toJSON();
-                    }
-                    if(Saiku.session.isAdmin) {
-
-                        var quota = new LicenseQuota();
-
-                        quota.fetch_quota('api/license/quota', function (opt) {
-                            if (opt.status === 'success') {
-                                Settings.LICENSEQUOTA = opt.data.toJSON();
-                            }
-                        });
-                    }
-
-                });
+//                var license =new License();
+//
+//                license.fetch_license('api/license/', function(opt) {
+//                    if (opt.status === 'success') {
+//                        Settings.LICENSE = opt.data.toJSON();
+//                    }
+//                    if(Saiku.session.isAdmin) {
+//
+//                        var quota = new LicenseQuota();
+//
+//                        quota.fetch_quota('api/license/quota', function (opt) {
+//                            if (opt.status === 'success') {
+//                                Settings.LICENSEQUOTA = opt.data.toJSON();
+//                            }
+//                        });
+//                    }
+//
+//                });
 
 
             this.load_session();
@@ -170,7 +170,7 @@ var Session = Backbone.Model.extend({
         document.location.reload(false);
         delete this.id;
     	//window.location = "https://sso.oaloft.com/cas/logout?service=http://cube.17zuoye.net";
-        window.location = "https://sso.oaloft.com/cas/logout?service=http%3A%2F%2Fcube.17zuoye.net%2F";  //注：必须使用这种编码的url
+//        window.location = "https://sso.oaloft.com/cas/logout?service=http%3A%2F%2Fcube.17zuoye.net%2F";  //注：必须使用这种编码的url
     },
     
     logout_bak: function() {

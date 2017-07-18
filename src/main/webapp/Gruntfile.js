@@ -6,16 +6,16 @@ module.exports = function(grunt) {
         saiku: grunt.file.readJSON('saikuFilesPath.json'),
         
         // Watch definitions
-        watch: {
-            reload: {
-                files: ['<%= saiku.path.css %>', '<%= saiku.path.html %>', '<%= saiku.path.js %>'],
-                options: {
-                    livereload: {
-                        port: 35729
-                    }
-                }
-            }
-        },
+//        watch: {
+//            reload: {
+//                files: ['<%= saiku.path.css %>', '<%= saiku.path.html %>', '<%= saiku.path.js %>'],
+//                options: {
+//                    livereload: {
+//                        port: 35729
+//                    }
+//                }
+//            }
+//        },
 
         // CSS Comb definitions
         csscomb: {

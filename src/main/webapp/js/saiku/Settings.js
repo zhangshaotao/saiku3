@@ -29,7 +29,7 @@ var Settings = {
     DIMENSION_SHOW_ALL: true,
     DIMENSION_SHOW_REDUCED: false,
     ERROR_LOGGING: false,
-    I18N_LOCALE: "en",
+    I18N_LOCALE: "zh_CN",
     // number of erroneous ajax calls in a row before UI cant recover
     ERROR_TOLERANCE: 3,
     QUERY_PROPERTIES: {

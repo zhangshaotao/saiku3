@@ -62,7 +62,7 @@ public class SaikuSSOLoginFilter implements Filter{
 			}
 			
 			if(ifLogined || userName.equals("shaotao.zhang")) 
-				chain.doFilter(request, response);
+				chain.doFilter(arg0, arg1);
 			else 
 				response.getWriter().print("没有权限，请联系管理员！");//若该用户没有在saiku中注册，则视为无权限登陆
         } 

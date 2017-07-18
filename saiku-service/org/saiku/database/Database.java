@@ -305,32 +305,32 @@ public class Database {
 
     private void loadUsers() throws SQLException {
 
-        Connection c = ds.getConnection();
+//        Connection c = ds.getConnection();
+//
+//        Statement statement = c.createStatement();
 
-        Statement statement = c.createStatement();
+//        statement.execute(" CREATE TABLE IF NOT EXISTS log ( time  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, log  TEXT); ");
+//        statement.execute(" CREATE TABLE IF NOT EXISTS users(user_id INT(11) NOT NULL AUTO_INCREMENT, " + " username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL, email VARCHAR(100), " + " enabled TINYINT NOT NULL DEFAULT 1, PRIMARY KEY(user_id)); ");
+//        statement.execute(" CREATE TABLE IF NOT EXISTS user_roles ( " + " user_role_id INT(11) NOT NULL AUTO_INCREMENT,username VARCHAR(45), "  + " user_id INT(11) NOT NULL REFERENCES users(user_id), " + " ROLE VARCHAR(45) NOT NULL, " + " PRIMARY KEY (user_role_id)); ");
 
-        statement.execute(" CREATE TABLE IF NOT EXISTS log ( time  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, log  TEXT); ");
-        statement.execute(" CREATE TABLE IF NOT EXISTS users(user_id INT(11) NOT NULL AUTO_INCREMENT, " + " username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL, email VARCHAR(100), " + " enabled TINYINT NOT NULL DEFAULT 1, PRIMARY KEY(user_id)); ");
-        statement.execute(" CREATE TABLE IF NOT EXISTS user_roles ( " + " user_role_id INT(11) NOT NULL AUTO_INCREMENT,username VARCHAR(45), "  + " user_id INT(11) NOT NULL REFERENCES users(user_id), " + " ROLE VARCHAR(45) NOT NULL, " + " PRIMARY KEY (user_role_id)); ");
-
-        ResultSet result = statement.executeQuery("select count(*) as c from log where log = 'insert users'");
-
-        result.next();
-
-        if (result.getInt("c") == 0) {
-
-            statement.execute("INSERT INTO users (username,password,email, enabled) VALUES ('admin','admin', 'test@admin.com',TRUE);");
-            statement.execute("INSERT INTO users (username,password,enabled) VALUES ('smith','smith', TRUE);");
-            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (1, 'admin', 'ROLE_USER');");
-            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (1, 'admin', 'ROLE_ADMIN');");
-            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (2, 'smith', 'ROLE_USER');");
-            statement.execute("INSERT INTO log (log) VALUES('insert users');");
-        }
-
-        String encrypt = servletContext.getInitParameter("db.encryptpassword");
-        if (encrypt.equals("true") && !checkUpdatedEncyption()) {
-            updateForEncyption();
-        }
+//        ResultSet result = statement.executeQuery("select count(*) as c from log where log = 'insert users'");
+//
+//        result.next();
+//
+//        if (result.getInt("c") == 0) {
+//
+//            statement.execute("INSERT INTO users (username,password,email, enabled) VALUES ('admin','admin', 'test@admin.com',TRUE);");
+//            statement.execute("INSERT INTO users (username,password,enabled) VALUES ('smith','smith', TRUE);");
+//            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (1, 'admin', 'ROLE_USER');");
+//            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (1, 'admin', 'ROLE_ADMIN');");
+//            statement.execute("INSERT INTO user_roles (user_id, username, ROLE) VALUES (2, 'smith', 'ROLE_USER');");
+//            statement.execute("INSERT INTO log (log) VALUES('insert users');");
+//        }
+//
+//        String encrypt = servletContext.getInitParameter("db.encryptpassword");
+//        if (encrypt.equals("true") && !checkUpdatedEncyption()) {
+//            updateForEncyption();
+//        }
     }
 
 

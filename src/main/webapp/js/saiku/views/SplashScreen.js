@@ -76,10 +76,16 @@ var SplashScreen = Backbone.View.extend({
     },
     //前端home页修改  --zst 20160722
     template:function(){
-    	 var template = $("<div> <div id='splash'><img src='/saiku3/images/17zuoye.png.jpg' width='100%'></div> </div>").html() || "";
+    	 var template = $("<div><div id='splash'><iframe src='http://pandora.17zuoye.net/swiper/home.html' style='width:100%;height:1000px' scrolling='no' frameborder='0'></iframe><div id='splash'></div>").html();
     			 return _.template(template)({
     		            //    cube_navigation: Saiku.session.sessionworkspace.cube_navigation
     		        });
+    },
+    template_b:function(){
+    	var template = $("<div> <div id='splash'><img src='/saiku3/images/17zuoye.png.jpg' width='100%'></div> </div>").html() || "";
+    	return _.template(template)({
+    		//    cube_navigation: Saiku.session.sessionworkspace.cube_navigation
+    	});
     },
     
     template_bak: function() {
@@ -153,62 +159,71 @@ var SplashScreen = Backbone.View.extend({
         var active = $('nav li.active a').attr('class');
         $('#'+active).fadeIn();
     },
+
+    //去除license请求    20161119
+    
+//    render: function(){
+//        var self = this;
+//
+//        var license = new License();
+//		if(Settings.BIPLUGIN5){
+//                $(self.el).html(self.template());
+//
+//                if (Settings.LICENSE.licenseType != undefined &&
+//                    Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
+//
+//                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
+//
+//
+//				}
+//                self.getContent();
+//
+//                self.getNews();
+//
+//                self.setupPage(self);
+//                $('#splash').find('> nav > ul > li.active > a').click(function(){
+//                    var active = $(this).attr('class');
+//                    $('nav li').removeClass('active');
+//                    $(this).parent().addClass('active');
+//                    $('.stabs section').hide();
+//                    $('#'+active).fadeIn();
+//                });
+//		}
+//		else {
+//                //$(self.el).html(self.template()).appendTo($('body'));
+//                $(self.el).html(self.template());
+//
+//                if (Settings.LICENSE.licenseType != undefined &&
+//                    Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open" +
+//                    " Source License") {
+//
+//                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
+//
+//
+//				}
+//                self.getContent();
+//
+//                self.getNews();
+//
+//                self.setupPage(self);
+//            $('#splash > nav > ul > li.active > a').click(function(){
+//                var active = $(this).attr('class');
+//                $('nav li').removeClass('active');
+//                $(this).parent().addClass('active');
+//                $('.stabs section').hide();
+//                $('#'+active).fadeIn();
+//            });
+//
+//        }
+//
+//      return this;
+//  },
+    
     render: function(){
-        var self = this;
-
-        var license = new License();
-		if(Settings.BIPLUGIN5){
-                $(self.el).html(self.template());
-
-                if (Settings.LICENSE.licenseType != undefined &&
-                    Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
-
-                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
-
-
-				}
-                self.getContent();
-
-                self.getNews();
-
-                self.setupPage(self);
-                $('#splash').find('> nav > ul > li.active > a').click(function(){
-                    var active = $(this).attr('class');
-                    $('nav li').removeClass('active');
-                    $(this).parent().addClass('active');
-                    $('.stabs section').hide();
-                    $('#'+active).fadeIn();
-                });
-		}
-		else {
-                //$(self.el).html(self.template()).appendTo($('body'));
-                $(self.el).html(self.template());
-
-                if (Settings.LICENSE.licenseType != undefined &&
-                    Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open" +
-                    " Source License") {
-
-                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
-
-
-				}
-                self.getContent();
-
-                self.getNews();
-
-                self.setupPage(self);
-            $('#splash > nav > ul > li.active > a').click(function(){
-                var active = $(this).attr('class');
-                $('nav li').removeClass('active');
-                $(this).parent().addClass('active');
-                $('.stabs section').hide();
-                $('#'+active).fadeIn();
-            });
-
-        }
-
-      return this;
-  },
+    	var self = this;
+    	$(self.el).html(self.template());
+    },
+    
     remove:function(){
         $(this.el).remove();
     },
@@ -280,6 +295,11 @@ var SplashScreen = Backbone.View.extend({
             }
         });
 
+    },
+    
+    changeFrameHeight: function (){
+        var ifm= document.getElementById("iframepage"); 
+        ifm.height=document.documentElement.clientHeight;
     }
 
 });

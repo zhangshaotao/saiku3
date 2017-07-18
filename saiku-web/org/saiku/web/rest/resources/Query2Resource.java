@@ -15,12 +15,15 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,6 +51,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.olap4j.impl.NamedListImpl;
 import org.olap4j.metadata.NamedList;
 import org.saiku.olap.dto.SimpleCubeElement;
@@ -61,7 +70,9 @@ import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.ThinSelection;
 import org.saiku.olap.util.SaikuProperties;
+import org.saiku.service.ISessionService;
 import org.saiku.service.olap.ThinQueryService;
+import org.saiku.service.util.ISaikuQuery;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.export.JSConverter;
 import org.saiku.web.export.PdfReport;
@@ -87,6 +98,15 @@ public class Query2Resource {
     private static final Logger log = LoggerFactory.getLogger(Query2Resource.class);
 
     private ThinQueryService thinQueryService;
+	private ISessionService sessionService;
+
+	public ISessionService getSessionService() {
+		return sessionService;
+	}
+
+    public void setSessionService(ISessionService ss) {
+		this.sessionService = ss;
+	}
 
     //@Autowired
     public void setThinQueryService(ThinQueryService tqs) {
@@ -213,12 +233,16 @@ public class Query2Resource {
                 rsc.setQuery(tq);
                 Long runtime = (new Date()).getTime()- start;
                 rsc.setRuntime(runtime.intValue());
+                
+                logCheck(tq ,rsc);  //加入打点日志
                 return rsc;
             }
 
             QueryResult qr = RestUtil.convert(thinQueryService.execute(tq));
             ThinQuery tqAfter = thinQueryService.getContext(tq.getName()).getOlapQuery();
             qr.setQuery(tqAfter);
+            
+    		logCheck(tq ,qr);  //加入打点日志
             return qr;
         }
         catch (Exception e) {
@@ -944,5 +968,49 @@ public class Query2Resource {
 	  
 	  namedList.clear();
 	  return namedList;
+  }
+  
+  /***
+	 * 该方法为在saiku加入日志打点
+	 * zst create 20161130
+	 * */
+  public void logCheck(ThinQuery tp, QueryResult qr){
+	  
+	  HttpClient httpClient = new DefaultHttpClient();  
+	  
+      try {
+    	  
+    	  String mdx = tp.getMdx();
+    	  String cube = tp.getCube().getUniqueName();
+    	  
+    	  
+  		  Map<String,Object> session = sessionService.getSession();
+  		  String user = (String) session.get("username");
+  		  String sessionid = (String) session.get("sessionid");
+          HttpPost post = new HttpPost("http://10.6.0.21:8080/log");
+          //创建参数列表
+          List<NameValuePair> list = new ArrayList<>();
+          list.add(new BasicNameValuePair("_c", "pandroa:log"));
+          list.add(new BasicNameValuePair("cube", cube));
+          list.add(new BasicNameValuePair("mdx", mdx));
+          list.add(new BasicNameValuePair("userName", user));
+          list.add(new BasicNameValuePair("roles", Arrays.toString(((ArrayList) session.get("roles")).toArray())));
+          list.add(new BasicNameValuePair("sessionId", sessionid));
+          list.add(new BasicNameValuePair("runTime", String.valueOf(qr.getRuntime())));
+          list.add(new BasicNameValuePair("queryDate",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
+          
+          //url格式编码
+          UrlEncodedFormEntity uefEntity = new UrlEncodedFormEntity(list,"UTF-8");
+          post.setEntity(uefEntity);
+          //System.out.println("POST 请求...." + post.getURI() + EntityUtils.toString(uefEntity));
+          
+          httpClient.execute(post);
+      } catch( UnsupportedEncodingException e){
+          e.printStackTrace();
+      } catch (IOException e) {
+          e.printStackTrace();
+      } catch (Exception e) {
+		e.printStackTrace();
+      }
   }
 }

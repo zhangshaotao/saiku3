@@ -17,28 +17,30 @@
 /**
  * Model which fetches the information of license
  */
-var License = Backbone.Model.extend({
-	url: 'api/license',
+//去除license请求    20161119
 
-	initialize: function() {
-		_.bindAll(this, 'fetch_license');
-	},
-
-	fetch_license: function(path, callback) {
-		this.fetch({
-			success: function(res) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'success', data: res});
-				}
-			},
-			error: function(err) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'error', data: err});
-				}
-			}
-		});
-	}
-});
+//var License = Backbone.Model.extend({
+//	url: 'api/license',
+//
+//	initialize: function() {
+//		_.bindAll(this, 'fetch_license');
+//	},
+//
+//	fetch_license: function(path, callback) {
+//		this.fetch({
+//			success: function(res) {
+//				if (callback && typeof(callback) === 'function') {
+//					callback({status: 'success', data: res});
+//				}
+//			},
+//			error: function(err) {
+//				if (callback && typeof(callback) === 'function') {
+//					callback({status: 'error', data: err});
+//				}
+//			}
+//		});
+//	}
+//});
 
 var LicenseUserModel = Backbone.Model.extend({
 	url: 'api/license/users'
@@ -49,25 +51,25 @@ var LicenseUsersCollection = Backbone.Collection.extend({
     model: LicenseUserModel
 });
 
-var LicenseQuota = Backbone.Model.extend({
-	url: 'api/license/quota',
-
-	initialize: function() {
-		_.bindAll(this, 'fetch_quota');
-	},
-
-	fetch_quota: function(path, callback) {
-		this.fetch({
-			success: function(res) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'success', data: res});
-				}
-			},
-			error: function(err) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'error', data: err});
-				}
-			}
-		});
-	}
-});
+//var LicenseQuota = Backbone.Model.extend({
+//	url: 'api/license/quota',
+//
+//	initialize: function() {
+//		_.bindAll(this, 'fetch_quota');
+//	},
+//
+//	fetch_quota: function(path, callback) {
+//		this.fetch({
+//			success: function(res) {
+//				if (callback && typeof(callback) === 'function') {
+//					callback({status: 'success', data: res});
+//				}
+//			},
+//			error: function(err) {
+//				if (callback && typeof(callback) === 'function') {
+//					callback({status: 'error', data: err});
+//				}
+//			}
+//		});
+//	}
+//});

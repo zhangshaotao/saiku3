@@ -56,19 +56,19 @@ var AdminConsole = Backbone.View.extend({
         this.schemas = new Schemas({}, { dialog: this });
         this.datasources = new Connections({}, { dialog: this });
         this.propertieskeys = new PropertiesKeys({}, {dialog:this});
-        var that = this,
-            license = new License();
-
-        license.fetch_license('api/license/', function(opt) {
-            if (opt.status === 'success') {
-                that.licenseInfo = opt.data.toJSON();
-                that.licenseUsers = new LicenseUsersCollection(null, {});
-                that.licenseUsers.fetch();
-            }
-            else {
-                $(that.el).find('.license_container').hide();
-            }
-        });
+        var that = this
+//            license = new License();
+//
+//        license.fetch_license('api/license/', function(opt) {
+//            if (opt.status === 'success') {
+//                that.licenseInfo = opt.data.toJSON();
+//                that.licenseUsers = new LicenseUsersCollection(null, {});
+//                that.licenseUsers.fetch();
+//            }
+//            else {
+//                $(that.el).find('.license_container').hide();
+//            }
+//        });
     },
     show_license_info: function(event) {
         event.preventDefault();

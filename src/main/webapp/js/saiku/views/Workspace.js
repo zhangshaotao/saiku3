@@ -257,10 +257,10 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.refresh_cubes_nav').css('margin-right', '40px');
             $(this.el).find('.admin_console_nav').append($link);
         }
-        
-        if (!Saiku.session.isAdmin) {
-            $(this.el).find('.refresh_cubes_nav').hide();
-        }
+        //对所有人开发刷新按钮
+//        if (!Saiku.session.isAdmin) {
+//            $(this.el).find('.refresh_cubes_nav').hide();
+//        }
 
         return this;
     },
